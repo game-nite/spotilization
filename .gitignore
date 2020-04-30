@@ -1,5 +1,7 @@
 # Token/ID Files 
 secrets.py 
+test scripts/secrets.py
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -131,4 +133,3 @@ dmypy.json
 # Pyre type checker
 .pyre/
 *.py
-test scripts/secrets.py
