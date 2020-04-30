@@ -26,6 +26,23 @@ class SpotifyAPIs:
 				topArtists.append(item['name'])
 		return topArtists
 
+	def topTracks(self): 
+		q = "https://api.spotify.com/v1/me/top/{}?time_range={}&limit={}".format("tracks", "long_term", "50")
+		r = requests.get(
+			q, 
+			headers = {
+				"Content-Type": "application/json",
+				"Authorization": "Bearer {}".format(self.spotify_token),
+			}
+		)
+		response_json = r.json() 
+		topArtists = [] 
+		for item in response_json['items']: 
+			if item['name']: 
+				topArtists.append(item['name'])
+		return topArtists
+
 if __name__ == '__main__':
 	cp = SpotifyAPIs() 
 	print(cp.topArtists())
+	print(cp.topTracks())
