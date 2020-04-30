@@ -5,6 +5,8 @@ import requests
 #ok this package sucks dont use 
 #import plotly.express as px
 import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
 
 from secrets import spotify_user_id, spotify_token_1 
 
@@ -60,7 +62,8 @@ class SpotifyAPIs:
 			"speechiness": 0,
 			"liveness": 0,
 			"valence": 0,
-  			"count": 0
+  			"count": 0,
+			"acousticness": 0
 		}
 
 		for trackID in self.topTrackIDs: 
@@ -83,6 +86,8 @@ class SpotifyAPIs:
 				averageFeatures["liveness"] = (averageFeatures["liveness"]*averageFeatures["count"] + response_json["liveness"]) / (averageFeatures["count"] + 1)
 			if response_json["valence"]: 
 				averageFeatures["valence"] = (averageFeatures["valence"]*averageFeatures["count"] + response_json["valence"]) / (averageFeatures["count"] + 1)
+			if response_json["acousticness"]: 
+				averageFeatures["acousticness"] = (averageFeatures["acousticness"]*averageFeatures["count"] + response_json["acousticness"]) / (averageFeatures["count"] + 1)
 			
 			averageFeatures["count"] = averageFeatures["count"] + 1
 
@@ -93,14 +98,22 @@ if __name__ == '__main__':
 	cp = SpotifyAPIs() 
 	print(cp.topArtists())
 	print(cp.topTracks())
-	# print(cp.analyseTopSongs())
 	averageFeatures = cp.analyseTopSongs() 
 
 
 	if averageFeatures["count"] != 0: 
-		# df = pd.DataFrame(dict(
-		# 	r=[averageFeatures['danceability'], averageFeatures['energy'], averageFeatures['liveness'], averageFeatures['valence'], averageFeatures['speechiness']],
-		# 	theta=['danceability','energy','liveness',
-		# 		'valence', 'speechiness']))
-		# fig = px.line_polar(df, r='r', theta='theta', line_close=True)
-		# fig.show()
+
+		data = [averageFeatures['danceability'], averageFeatures['energy'], averageFeatures['liveness'], averageFeatures['valence'], averageFeatures['speechiness'], averageFeatures['acousticness']]
+
+		data += data [:1]
+
+		attributes = ['danceability','energy','liveness', 'valence', 'speechiness', 'acousticness']
+		fig = plt.figure()
+		angles = [n / float(len(data)-1) * 2 * np.pi for n in range(0, len(data)-1)]
+		angles += angles [:1]
+
+		ax = plt.subplot(111, polar=True)
+		plt.xticks(angles[:-1],attributes)
+		ax.plot(angles, data)
+		ax.fill(angles, data, 'teal', alpha=0.1)
+		plt.show()
